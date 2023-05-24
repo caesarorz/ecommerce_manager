@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+
+  manager_api:
+    container_name: dj_manager_api
+    build:
+      context: .
+      dockerfile: ./manager/Dockerfile
+    restart: always
+    environment:
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+    volumes:
+      - static-data:/vol/app
+    depends_on:
+      - manager_db
+
+  manager_db:
+    container_name: dj_manager_db
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: django_admin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_TCP_PORT: 3307
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3307:3307
+    expose:
+      - 3307
+
+  proxy:
+    container_name: manager_proxy
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - ecommerce_api
+    ports:
+      - 8004:8000
+    volumes:
+      - static-data:/vol/static
+
+volumes:
+  static-data:
+  mysql-data:
