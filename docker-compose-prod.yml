@@ -39,7 +39,7 @@ services:
     depends_on:
       - manager_api
     ports:
-      - 8004:8000
+      - 80:8000
     volumes:
       - static-data:/vol/static
 
