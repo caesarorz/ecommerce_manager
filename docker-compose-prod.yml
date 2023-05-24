@@ -37,7 +37,7 @@ services:
       context: ./proxy
     restart: always
     depends_on:
-      - ecommerce_api
+      - manager_api
     ports:
       - 8004:8000
     volumes:
