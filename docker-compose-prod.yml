@@ -9,6 +9,7 @@ services:
     restart: always
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
     volumes:
       - static-data:/vol/app
     depends_on:
