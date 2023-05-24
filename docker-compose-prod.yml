@@ -10,6 +10,10 @@ services:
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - AWS_KEY_ID=${AWS_KEY_ID}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
       - static-data:/vol/app
     depends_on:
