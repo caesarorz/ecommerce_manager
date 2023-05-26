@@ -4,7 +4,6 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,7 +21,6 @@ from manager.pagination import CustomPagination
 class OrderGenericAPIView(
     generics.GenericAPIView, mixins.ListModelMixin,
     mixins.RetrieveModelMixin):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -37,7 +35,6 @@ class OrderGenericAPIView(
 
 
 class ExportAPIView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -59,7 +56,6 @@ class ExportAPIView(APIView):
 
 
 class ChartAPIView(APIView):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, _):

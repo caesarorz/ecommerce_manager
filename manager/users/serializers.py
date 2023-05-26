@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, Permission, Role
 
 
@@ -33,7 +33,6 @@ class RoleSerializer(serializers.ModelSerializer):
         instance.save()
         instance.permissions.add(*permissions)
         instance.save()
-
         return instance
 
 
@@ -47,21 +46,29 @@ class RoleRelatedField(serializers.RelatedField):
 
 class UserSerializer(serializers.ModelSerializer):
     role = RoleRelatedField(many=False, queryset=Role.objects.all())
+    is_admin = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password', 'role']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['id', 'first_name', 'username', 'last_name', 'email', 'role', 'is_admin']
 
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+    def get_id(self, obj):
+        return obj.id
+
+    def get_is_admin(self, obj):
+        return obj.is_staff
+
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'token', 'role']
+
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
+
 
 
 

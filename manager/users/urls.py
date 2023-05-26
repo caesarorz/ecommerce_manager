@@ -1,27 +1,34 @@
 from django.urls import path
 
-from .views import (get_users, register, login, AuthenticateUser, logout,
-                PermissionAPIView, RoleViewSet, UserGenericAPIView, ProfileInfoAPIView,
-                ProfilePasswordAPIView)
+from .views import (get_users, register_user, logout, MyTokenObtainPairView,
+                    RoleViewSet, ProfileInfoAPIView, PermissionAPIView,
+                    UserViewSet, ProfilePasswordAPIView)
 
 urlpatterns = [
-    path('listusers', get_users),                       # OK. is a get users mejorar (not to show my user)
-    path('register', register),                         # OK
-    path('login', login),                               # OK
-    path('logout', logout),                             # OK mejorar (erase states)
-    path('user', AuthenticateUser.as_view()),           # OK when login, authenticates the user
+    # path('users', get_users), # OK
+    path('user/info', ProfileInfoAPIView.as_view()),           #  OK (just with the user info)
+    path('user/password', ProfilePasswordAPIView.as_view()),   #  X (changed password not working during login)
+    path('register', register_user),
+    path('login', MyTokenObtainPairView.as_view()),     # OK
+    path('logout', logout),
     path('permissions', PermissionAPIView.as_view()),   # OK list permissions only
-    path('roles', RoleViewSet.as_view({
+    path('users', UserViewSet.as_view({
         'get': 'list',                                  # OK
         'post': 'create',                               # OK
     })),
-    path('roles/<str:pk>', RoleViewSet.as_view({        # not using
+    path('users/<str:pk>', UserViewSet.as_view({        # OK
         'delete': 'delete',                             # OK
-        'put': 'update',                                # X
-        'get': 'retrieve'                               # no using (seems)
+        'put': 'update',                                # OK
+        'get': 'retrieve'                               # OK
     })),
-    path('users/info', ProfileInfoAPIView.as_view()),           #  OK (just with the user info)
-    path('users/password', ProfilePasswordAPIView.as_view()),   #  X (changed password not working during login)
-    path('users', UserGenericAPIView.as_view()),                # GET: seems not working   PUT: OK     DEL: OK     POST: OK
-    path('users/<str:pk>', UserGenericAPIView.as_view()),       #
+    path('roles', RoleViewSet.as_view({                 # OK
+        'get': 'list',                                  # OK
+        'post': 'create',                               # OK
+    })),
+    path('roles/<str:pk>', RoleViewSet.as_view({        # OK
+        'delete': 'delete',                             # OK
+        'put': 'update',                                # OK
+        'get': 'retrieve'                               # OK
+    })),
+
 ]

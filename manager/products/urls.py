@@ -2,12 +2,20 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .views import ProductGenericAPIView, FileUploadView
+from .views import FileUploadView, ProductViewSet, create_product
 
 urlpatterns = [
-        path('products', ProductGenericAPIView.as_view()),              #   GET: OK, POST:OK, PUT: X, DEL: OK
-        path('products/<str:pk>', ProductGenericAPIView.as_view()),     #
-        path('upload', FileUploadView.as_view())                        # POST: OK
-              ] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        path('upload', FileUploadView.as_view()),
+        path('products', ProductViewSet.as_view({                 # OK
+            'get': 'list',                                  # OK
+            # 'post': 'create',                               # XXXXX
+        })),
+        path('products/create', create_product, name='create-product'),
+        path('products/<str:pk>', ProductViewSet.as_view({  # OK
+            'delete': 'delete',                             # OK
+            'put': 'update',                                # OK
+            'get': 'retrieve'                               # OK
+        })),
+      ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
