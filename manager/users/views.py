@@ -103,7 +103,6 @@ class RoleViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         role = Role.objects.get(id=pk)
         serializer = RoleSerializer(role)
-
         if serializer:
             return Response({
                 'data': serializer.data
@@ -119,7 +118,6 @@ class RoleViewSet(viewsets.ViewSet):
             'data': serializer.data
         }, status=status.HTTP_202_ACCEPTED)
 
-    # destroy
     def delete(self, request, pk=None):
         role = Role.objects.get(id=pk)
         if role:
@@ -166,7 +164,6 @@ class UserViewSet(viewsets.ViewSet):
             'data': serializer.data
         }, status=status.HTTP_202_ACCEPTED)
 
-    # destroy
     def delete(self, request, pk=None):
         role = User.objects.get(id=pk)
         if role:
