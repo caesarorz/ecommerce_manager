@@ -24,5 +24,6 @@ COPY ./manager /app/
 
 ENV PATH="/scripts:/py/bin:$PATH"
 
-# USER django-user
+USER django-user
+
 CMD ["run.sh"]
