@@ -7,13 +7,24 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
 
+from drf_spectacular.utils import extend_schema
+from .serializers import EmptyPayloadResponseSerializer
+
 # # Create your views here.
 from .serializers import UserSerializer, PermissionSerializer, RoleSerializer, UserSerializerWithToken
 from .models import User, Permission, Role
 from manager.pagination import CustomPagination
 from .permissions import ViewPermissions
 
+from users.authentication import JWTAuthentication
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """_summary_
+
+    Args:
+        TokenObtainPairSerializer (_type_): _description_
+    """
+    @extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
     def validate(self, attrs):
         data = super().validate(attrs)
 
@@ -23,13 +34,28 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
 
-
+@extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
 class MyTokenObtainPairView(TokenObtainPairView):
+    """_summary_
+
+    Args:
+        TokenObtainPairView (_type_): _description_
+    """
     serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
-def logout(_):
+# @permission_classes([JWTAuthentication])
+def logout(request):
+    """_summary_
+
+    Args:
+        _ (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+
     response = Response()
     response.delete_cookie(key='jwt')
     response.data = {
@@ -40,10 +66,18 @@ def logout(_):
 
 @api_view(['POST'])
 def register_user(request):
-    data = request.data
+    """_summary_
 
+    Args:
+        request (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.data
     if data['password'] != data['password_confirm']:
-        Response('Passwords do not match!')
+        message = {'detail': 'Passwords do not match'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         user = User.objects.create(
@@ -63,15 +97,40 @@ def register_user(request):
 @api_view(['GET'])
 # @permission_classes([IsAdminUser])
 def get_users(request):
+    """_summary_
+
+    Args:
+        request (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     users = User.objects.all()
     serializer = UserSerializer(users, many=True) # returns an list
     return Response(serializer.data)
 
 
 class PermissionAPIView(APIView):
-    permission_classes = [IsAuthenticated] # from middleware
+    """_summary_
+
+    Args:
+        APIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # permission_classes = [IsAuthenticated] # from middleware
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         permissions = Permission.objects.all()
         serializer = PermissionSerializer(permissions, many=True)
 
@@ -83,16 +142,41 @@ class PermissionAPIView(APIView):
 
 
 class RoleViewSet(viewsets.ViewSet):
+    """_summary_
+
+    Args:
+        viewsets (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # permission_classes = [IsAuthenticated & ViewPermissions]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     permission_object = 'roles'
 
     def list(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         roles = Role.objects.all()
         serializer = RoleSerializer(roles, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         serializer = RoleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -101,6 +185,15 @@ class RoleViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         role = Role.objects.get(id=pk)
         serializer = RoleSerializer(role)
         if serializer:
@@ -110,6 +203,15 @@ class RoleViewSet(viewsets.ViewSet):
         return Response('Role doesn\'t exists')
 
     def update(self, request, pk=None):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         role = Role.objects.get(id=pk)
         serializer = RoleSerializer(instance=role, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -119,6 +221,15 @@ class RoleViewSet(viewsets.ViewSet):
         }, status=status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk=None):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         role = Role.objects.get(id=pk)
         if role:
             role.delete()
@@ -128,16 +239,41 @@ class RoleViewSet(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ViewSet):
+    """_summary_
+
+    Args:
+        viewsets (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # permission_classes = [IsAuthenticated & ViewPermissions]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     permission_object = 'users'
 
     def list(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         roles = User.objects.all()
         serializer = UserSerializer(roles, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -146,6 +282,15 @@ class UserViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         role = User.objects.get(id=pk)
         serializer = UserSerializer(role)
 
@@ -156,6 +301,15 @@ class UserViewSet(viewsets.ViewSet):
         return Response('Role doesn\'t exists')
 
     def update(self, request, pk=None):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         user = User.objects.get(id=pk)
         serializer = UserSerializer(instance=user, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -165,6 +319,15 @@ class UserViewSet(viewsets.ViewSet):
         }, status=status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk=None):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+            pk (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         role = User.objects.get(id=pk)
         if role:
             role.delete()
@@ -174,18 +337,57 @@ class UserViewSet(viewsets.ViewSet):
 
 
 class ProfileInfoAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    """_summary_
 
+    Args:
+        APIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     def get(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         user = request.user
         serializer = UserSerializer(user, data=request.data, partial=True)
         return Response(serializer.data)
 
 
 class ProfilePasswordAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    """_summary_
+
+    Args:
+        APIView (_type_): _description_
+
+    Raises:
+        exceptions.ValidationError: _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def put(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Raises:
+            exceptions.ValidationError: _description_
+
+        Returns:
+            _type_: _description_
+        """
         user = request.user
         if request.data['password'] != request.data['password_confirm']:
             raise exceptions.ValidationError('Passwords do not match')
