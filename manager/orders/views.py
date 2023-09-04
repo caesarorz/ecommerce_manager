@@ -19,13 +19,11 @@ from .serializers import OrderItemSerializer, OrderSerializer
 from manager.pagination import CustomPagination
 
 class OrderGenericAPIView(
-    generics.GenericAPIView, mixins.ListModelMixin,
-    mixins.ListModelMixin):
+    generics.GenericAPIView, mixins.ListModelMixin):
     """Orders views.
 
     Args:
         generics (object): GenericAPIView
-        mixins (object): ListModelMixin
         mixins (object): ListModelMixin
 
 
