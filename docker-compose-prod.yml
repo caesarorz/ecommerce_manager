@@ -2,11 +2,13 @@ version: '3.9'
 services:
 
   manager_api:
-    container_name: dj_manager_api
+    container_name: man_api
     build:
       context: .
       dockerfile: ./manager/Dockerfile
     restart: always
+    depends_on:
+      - db
     environment:
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
@@ -16,11 +18,11 @@ services:
       - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
       - static-data:/vol/app
-    depends_on:
-      - manager_db
+    networks:
+      - api-network
 
-  manager_db:
-    container_name: dj_manager_db
+  db:
+    container_name: man_db
     image: mysql:5.7.22
     restart: always
     environment:
@@ -28,16 +30,16 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_TCP_PORT: 3307
+      MYSQL_TCP_PORT: 3306
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - 3307:3307
-    expose:
-      - 3307
+      - "3302:3306"
+    networks:
+      - api-network
 
   proxy:
-    container_name: manager_proxy
+    container_name: man_proxy
     build:
       context: ./proxy
     restart: always
@@ -47,6 +49,14 @@ services:
       - 80:8000
     volumes:
       - static-data:/vol/static
+    networks:
+      - api-network
+
+
+networks:
+  api-network:
+    driver: bridge  # Use a bridge network for the containers
+
 
 volumes:
   static-data:
