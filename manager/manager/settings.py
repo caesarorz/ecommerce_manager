@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'core',
+    'drf_spectacular',
 ]
 
 # Token JWT: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
@@ -125,10 +126,11 @@ TEMPLATES = [
 ]
 
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE': 10
-# }
+REST_FRAMEWORK = {
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 
 
 WSGI_APPLICATION = 'manager.wsgi.application'
@@ -139,12 +141,12 @@ WSGI_APPLICATION = 'manager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_admin',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'manager_db',
-        'PORT': '3307',
+        'ENGINE':'django.db.backends.mysql',
+        'HOST':'db',
+        'NAME':'django_admin',
+        'USER':'root',
+        'PASSWORD':'root',
+        'PORT':3306,
     }
 }
 
@@ -194,8 +196,9 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/vol/web/media'
 STATIC_ROOT = '/vol/web/static'
 
-# Cors for frontend API
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
+# Cors for frontend API
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
