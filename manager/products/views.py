@@ -18,16 +18,33 @@ from manager.pagination import CustomPagination
 
 
 class ProductViewSet(viewsets.ViewSet):
-
-    permission_classes = [IsAuthenticated]
+    """Product View Set"""
+    authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
     permission_object = 'products'
 
     def list(self, request):
+        """Retrieve a list of all products
+
+        Args:
+            request (HttpRequest): No using.
+
+        Returns:
+            _type_: _description_
+        """
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -63,7 +80,7 @@ class ProductViewSet(viewsets.ViewSet):
 
 
 class FileUploadView(APIView):
-    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser,)
 
