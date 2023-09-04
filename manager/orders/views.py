@@ -20,13 +20,33 @@ from manager.pagination import CustomPagination
 
 class OrderGenericAPIView(
     generics.GenericAPIView, mixins.ListModelMixin,
-    mixins.RetrieveModelMixin):
-    permission_classes = [IsAuthenticated]
+    mixins.ListModelMixin):
+    """Orders views.
+
+    Args:
+        generics (object): GenericAPIView
+        mixins (object): ListModelMixin
+        mixins (object): ListModelMixin
+
+
+    """
+
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     pagination_class = CustomPagination
 
     def get(self, request, pk=None):
+        """Get order by id
+
+        Args:
+            request (HttpRequest):
+            pk (str, optional): Order represented by id. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         if pk:
             return Response({
                 'data': self.retrieve(request, pk).data
@@ -34,10 +54,20 @@ class OrderGenericAPIView(
         return self.list(request)
 
 
-class ExportAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
+class ExportAPIView(APIView):
+    """_summary_"""
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     def get(self, request):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment: filename=orders.csv'
 
@@ -56,9 +86,20 @@ class ExportAPIView(APIView):
 
 
 class ChartAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    """_summary_"""
 
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
     def get(self, _):
+        """_summary_
+
+        Args:
+            request (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+
         with connection.cursor() as cursor:
             cursor.execute("""
             SELECT DATE_FORMAT(o.created_at, '%Y-%m-%d') as date,
