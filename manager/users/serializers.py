@@ -70,6 +70,10 @@ class UserSerializerWithToken(UserSerializer):
         return str(token.access_token)
 
 
+class EmptyPayloadResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
+
+
 
 
 
