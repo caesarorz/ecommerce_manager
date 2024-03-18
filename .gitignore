@@ -139,7 +139,7 @@ GitHub.sublime-settings
 # my files for testing
 .env
 .dbdata
-/frontend_manager
 /resources
 info
 test.js
+/node-modules
