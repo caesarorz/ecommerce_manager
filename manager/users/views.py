@@ -5,13 +5,16 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import exceptions, viewsets, status, generics, mixins
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from django.contrib.auth.hashers import make_password
 
 from drf_spectacular.utils import extend_schema
 from .serializers import EmptyPayloadResponseSerializer
 
 # # Create your views here.
-from .serializers import UserSerializer, PermissionSerializer, RoleSerializer, UserSerializerWithToken
+from .serializers import (UserSerializer, PermissionSerializer, MyTokenObtainPairSerializer,
+                          RoleSerializer, UserSerializerWithToken)
 from .models import User, Permission, Role
 from manager.pagination import CustomPagination
 from .permissions import ViewPermissions
@@ -19,10 +22,7 @@ from .permissions import ViewPermissions
 from users.authentication import JWTAuthentication
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """_summary_
-
-    Args:
-        TokenObtainPairSerializer (_type_): _description_
+    """Get token
     """
     @extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
     def validate(self, attrs):
@@ -36,24 +36,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 @extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
 class MyTokenObtainPairView(TokenObtainPairView):
-    """_summary_
-
-    Args:
-        TokenObtainPairView (_type_): _description_
     """
+    """
+    serializer_class = MyTokenObtainPairSerializer
+
+
+class TokenCreateView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
 # @permission_classes([JWTAuthentication])
 def logout(request):
-    """_summary_
-
-    Args:
-        _ (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
 
     response = Response()
@@ -66,13 +61,7 @@ def logout(request):
 
 @api_view(['POST'])
 def register_user(request):
-    """_summary_
-
-    Args:
-        request (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     data = request.data
     if data['password'] != data['password_confirm']:
@@ -97,13 +86,7 @@ def register_user(request):
 @api_view(['GET'])
 # @permission_classes([IsAdminUser])
 def get_users(request):
-    """_summary_
-
-    Args:
-        request (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     users = User.objects.all()
     serializer = UserSerializer(users, many=True) # returns an list
@@ -111,13 +94,7 @@ def get_users(request):
 
 
 class PermissionAPIView(APIView):
-    """_summary_
-
-    Args:
-        APIView (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     # permission_classes = [IsAuthenticated] # from middleware
     authentication_classes = [JWTAuthentication]
@@ -142,13 +119,7 @@ class PermissionAPIView(APIView):
 
 
 class RoleViewSet(viewsets.ViewSet):
-    """_summary_
-
-    Args:
-        viewsets (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     # permission_classes = [IsAuthenticated & ViewPermissions]
     # permission_classes = [IsAuthenticated]
@@ -239,13 +210,7 @@ class RoleViewSet(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ViewSet):
-    """_summary_
-
-    Args:
-        viewsets (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     # permission_classes = [IsAuthenticated & ViewPermissions]
     # permission_classes = [IsAuthenticated]
@@ -253,26 +218,14 @@ class UserViewSet(viewsets.ViewSet):
     permission_object = 'users'
 
     def list(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         roles = User.objects.all()
         serializer = UserSerializer(roles, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -282,14 +235,7 @@ class UserViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         role = User.objects.get(id=pk)
         serializer = UserSerializer(role)
@@ -301,14 +247,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response('Role doesn\'t exists')
 
     def update(self, request, pk=None):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        """
         """
         user = User.objects.get(id=pk)
         serializer = UserSerializer(instance=user, data=request.data)
@@ -319,14 +258,7 @@ class UserViewSet(viewsets.ViewSet):
         }, status=status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk=None):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        """
         """
         role = User.objects.get(id=pk)
         if role:
@@ -337,24 +269,12 @@ class UserViewSet(viewsets.ViewSet):
 
 
 class ProfileInfoAPIView(APIView):
-    """_summary_
-
-    Args:
-        APIView (_type_): _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     # permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     def get(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         user = request.user
         serializer = UserSerializer(user, data=request.data, partial=True)
@@ -362,31 +282,13 @@ class ProfileInfoAPIView(APIView):
 
 
 class ProfilePasswordAPIView(APIView):
-    """_summary_
-
-    Args:
-        APIView (_type_): _description_
-
-    Raises:
-        exceptions.ValidationError: _description_
-
-    Returns:
-        _type_: _description_
+    """
     """
     # permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     def put(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Raises:
-            exceptions.ValidationError: _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         user = request.user
         if request.data['password'] != request.data['password_confirm']:

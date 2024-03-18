@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, Permission, Role
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -75,5 +76,14 @@ class EmptyPayloadResponseSerializer(serializers.Serializer):
 
 
 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Customizes JWT default Serializer to add more information about user"""
+    @classmethod
+    def get_token(cls, user):
 
+        token = super().get_token(user)
+        token['is_staff'] = user.is_staff
+        return token
+
+    raise serializers.ValidationError({'active': 'User must confirm email to be actived.'})
 

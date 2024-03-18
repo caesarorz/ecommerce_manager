@@ -54,7 +54,7 @@ class OrderGenericAPIView(
 
 
 class ExportAPIView(APIView):
-    """_summary_"""
+    """Export csv file to graph"""
     # permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     def get(self, request):
