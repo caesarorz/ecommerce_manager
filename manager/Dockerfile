@@ -1,14 +1,19 @@
-FROM python:3.9-alpine3.13
+FROM python:3.9-alpine
 LABEL maintainer="Cesar O."
 
 ENV PYTHONUNBUFFERED 1
 
+
+COPY ./manager/requirements.txt /tmp/requirements.txt
+COPY ./manager/requirements.dev.txt /tmp/requirements.dev.txt
+COPY ./manager/scripts /scripts
+
+COPY ./manager /app
 WORKDIR /app
 EXPOSE 8000
 
-COPY ./manager/requirements.txt /tmp/requirements.txt
-COPY ./manager/scripts /scripts
 
+ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client jpeg-dev && \
@@ -30,10 +35,9 @@ RUN python -m venv /py && \
     chmod -R 755 /vol && \
     chmod -R +x /scripts
 
-COPY ./manager /app/
 
 ENV PATH="/scripts:/py/bin:$PATH"
 
-USER django-user
+# USER django-user
 
 CMD ["run.sh"]

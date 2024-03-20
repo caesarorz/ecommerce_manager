@@ -5,12 +5,9 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import exceptions, viewsets, status, generics, mixins
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+# from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth.hashers import make_password
-
-from drf_spectacular.utils import extend_schema
-from .serializers import EmptyPayloadResponseSerializer
 
 # # Create your views here.
 from .serializers import (UserSerializer, PermissionSerializer, MyTokenObtainPairSerializer,
@@ -21,28 +18,24 @@ from .permissions import ViewPermissions
 
 from users.authentication import JWTAuthentication
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Get token
-    """
-    @extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        serializer = UserSerializerWithToken(self.user).data
-        for k, v in serializer.items():
-            data[k] = v
-
-        return data
-
-@extend_schema(request=None, responses=EmptyPayloadResponseSerializer)
-class MyTokenObtainPairView(TokenObtainPairView):
-    """
-    """
-    serializer_class = MyTokenObtainPairSerializer
-
-
 class TokenCreateView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     def validate(self, attrs):
+#         data = super().validate(attrs)
+#         print("*********************************************************************", self.user)
+#         serializer = UserSerializerWithToken(self.user).data
+#         print(serializer)
+
+#         for k, v in serializer.items():
+#             data[k] = v
+
+#         return data
+
+
+# class MyTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = MyTokenObtainPairSerializer
 
 
 @api_view(['POST'])
@@ -100,13 +93,7 @@ class PermissionAPIView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         permissions = Permission.objects.all()
         serializer = PermissionSerializer(permissions, many=True)
@@ -127,26 +114,14 @@ class RoleViewSet(viewsets.ViewSet):
     permission_object = 'roles'
 
     def list(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         roles = Role.objects.all()
         serializer = RoleSerializer(roles, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         serializer = RoleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -156,14 +131,7 @@ class RoleViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         role = Role.objects.get(id=pk)
         serializer = RoleSerializer(role)
@@ -174,14 +142,7 @@ class RoleViewSet(viewsets.ViewSet):
         return Response('Role doesn\'t exists')
 
     def update(self, request, pk=None):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        """
         """
         role = Role.objects.get(id=pk)
         serializer = RoleSerializer(instance=role, data=request.data)
@@ -192,14 +153,7 @@ class RoleViewSet(viewsets.ViewSet):
         }, status=status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk=None):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-            pk (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        """
         """
         role = Role.objects.get(id=pk)
         if role:

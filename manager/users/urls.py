@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import (get_users, register_user, logout, MyTokenObtainPairView,
+from .views import (register_user, logout, TokenCreateView,
                     RoleViewSet, ProfileInfoAPIView, PermissionAPIView,
-                    UserViewSet, ProfilePasswordAPIView, TokenCreateView)
+                    UserViewSet, ProfilePasswordAPIView)
 
 urlpatterns = [
     # path('users', get_users), # OK

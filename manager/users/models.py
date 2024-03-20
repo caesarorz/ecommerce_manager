@@ -25,8 +25,6 @@ class User(AbstractUser):
     username = models.CharField(max_length=200, unique=True, default='')
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
-    def __str__(self) -> str:
-        return self.email
 
 
 def updateUser(sender, instance, **kwargs):

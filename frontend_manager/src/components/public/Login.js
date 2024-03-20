@@ -17,6 +17,7 @@ export default function Login() {
     const [message, setMesssage] = useState('');
 
     const formSubmit = async (e) => {
+        console.log(e, login)
         e.preventDefault();
         try {
             const response = await axios.post('login', {
@@ -24,6 +25,9 @@ export default function Login() {
                 username: login.email,
                 password: login.password
             })
+
+            console.log(response)
+
             const { email, first_name, id, last_name, role, token } = response.data
             localStorage.setItem("logged", "true");
             localStorage.setItem("user", JSON.stringify({"email": email, "first_name": first_name, "id": id, "last_name": last_name, "token": token, "role":role}))
@@ -43,7 +47,7 @@ export default function Login() {
                 { (message) ? <Message variant='alert alert-warning' children={message}/> : ''}
                 <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                 <label htmlFor="inputEmail" className="sr-only">Email address</label>
-                <input type="email" id="inputEmail" className="form-control" placeholder="Email address" required autoFocus
+                <input type="text" id="inputEmail" className="form-control" placeholder="Email address" required autoFocus
                     onChange={a => login.email = a.target.value}/>
                 <label htmlFor="inputPassword" className="sr-only">Password</label>
                 <input type="password" id="inputPassword" className="form-control" placeholder="Password" required

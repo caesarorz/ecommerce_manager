@@ -51,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'username', 'last_name', 'email', 'role', 'is_admin']
+        fields = ['id', 'first_name', 'username', 'last_name', 'role', 'is_admin']
 
     def get_id(self, obj):
         return obj.id
@@ -71,9 +71,20 @@ class UserSerializerWithToken(UserSerializer):
         return str(token.access_token)
 
 
-class EmptyPayloadResponseSerializer(serializers.Serializer):
-    detail = serializers.CharField()
+# class EmptyPayloadResponseSerializer(serializers.Serializer):
+#     detail = serializers.CharField()
 
+
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'name', 'isAdmin', 'token']
+
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -81,9 +92,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
 
-        token = super().get_token(user)
-        token['is_staff'] = user.is_staff
-        return token
+        if user.is_active:
 
-    raise serializers.ValidationError({'active': 'User must confirm email to be actived.'})
+            token = super().get_token(user)
+            token['is_staff'] = user.is_staff
+            return token
 
+        raise serializers.ValidationError({'active': 'User must confirm email to be actived.'})
