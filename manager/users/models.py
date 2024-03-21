@@ -1,6 +1,10 @@
 from django.db.models.signals import pre_save
 from django.contrib.auth.models import AbstractUser
+from rest_framework.views import APIView
 from django.db import models
+from rest_framework.response import Response
+from django.http import Http404
+from users.serializers import UserSerializer
 
 
 class Permission(models.Model):
@@ -8,6 +12,7 @@ class Permission(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
 
 class Role(models.Model):
     name = models.CharField(max_length=200)
@@ -26,6 +31,20 @@ class User(AbstractUser):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
 
+class UserDetail(APIView):
+    """
+    Retrieve a user instance.
+    """
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = UserSerializer(snippet)
+        return Response(serializer.data)
 
 def updateUser(sender, instance, **kwargs):
     user = instance

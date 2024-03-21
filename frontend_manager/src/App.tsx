@@ -3,8 +3,9 @@ import './App.css';
 import Dashboard from './components/Dashboard/Dashboard';
 import Users from './components/Users/Users';
 
-import {Route, Routes, BrowserRouter as Router, Navigate} from "react-router-dom";
+import {Route, Routes, BrowserRouter as Router} from "react-router-dom";
 import Login from './components/public/Login';
+import Logout from './components/public/Logout';
 import Register from './components/public/Register';
 import RedirectToDashboard from './components/RedirectToDashboard';
 import UsersCreate from './components/Users/UsersCreate';
@@ -42,6 +43,7 @@ function App() {
               <Route path={'/orders'} element={<Orders/>}/>
               <Route path={'/profile'} element={<UserProfile/>}/>
               <Route path={'/login'} element={<Login/>}/>
+              <Route path={'/logout'} element={<Logout/>}/>
               <Route path={'/register'} element={<Register/>}/>
           </Routes>
         }

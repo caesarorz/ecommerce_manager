@@ -10,13 +10,12 @@ export default function Roles() {
 
         useEffect(() => {
             const fetchData = async () => {
-                const val = localStorage.getItem("user")
-                if(val) {
-                    const userInfo = JSON.parse(val)
+                const token = localStorage.getItem("token")
+                if(token) {
                     const config = {
                         headers: {
                             'Content-type': 'application/json',
-                            Authorization: `Bearer ${userInfo.token}`
+                            Authorization: `Bearer ${token}`
                         }
                     }
                     const { data } = await axios.get(
@@ -24,6 +23,8 @@ export default function Roles() {
                         config
                     )
                     setRoles(data.data)
+                } else {
+                    navegate('/logout')
                 }
             }
             fetchData()
@@ -35,13 +36,12 @@ export default function Roles() {
                 // await axios.delete(`roles/${e.target.value}`)
                 // setRoles(roles.filter((role: Role) => role.id !== parseInt(e.target.value)));
 
-                const val = localStorage.getItem("user")
-                if(val) {
-                    const userInfo = JSON.parse(val)
+                const token = localStorage.getItem("token")
+                if(token) {
                     const config = {
                         headers: {
                             'Content-type': 'application/json',
-                            Authorization: `Bearer ${userInfo.token}`
+                            Authorization: `Bearer ${token}`
                         }
                     }
                     const { data } = await axios.delete(

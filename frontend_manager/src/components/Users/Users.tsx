@@ -13,13 +13,12 @@ export default function Users() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get(
@@ -35,13 +34,12 @@ export default function Users() {
       const deleteUser = async (e:any) => {
         e.preventDefault()
         try {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.delete(
@@ -64,12 +62,12 @@ export default function Users() {
 
     return (
         <Wrapper>
-                <div
-                    className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <div className="btn-toolbar mb-2 mb-md-0">
-                        <Link to={"/users/create"} type="button" className="btn btn-sm btn-outline-primary">Add</Link>
-                    </div>
+            <div
+                className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <div className="btn-toolbar mb-2 mb-md-0">
+                    <Link to={"/users/create"} type="button" className="btn btn-sm btn-outline-primary">Add</Link>
                 </div>
+            </div>
 
 
             {!users ? (<div>No users available for now</div>) : (

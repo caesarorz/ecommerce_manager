@@ -43,6 +43,25 @@ services:
     # networks:
     #   - api-network
 
+  pgAdmin:
+      image: dpage/pgadmin4
+      container_name: manager_pgadmin
+      restart: always
+      depends_on:
+        - db
+      ports:
+        - 8080:80
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=devuser@email.com
+        - PGADMIN_DEFAULT_PASSWORD=changeme
+      volumes:
+        - ./pgadmin:/var/lib/pgadmin
+        - ./pgadmin:/certs/server.cert
+        - ./pgadmin:/certs/server.key
+        - ./pgadmin:/pgadmin4/servers.json
+    # networks:
+    #   - api-network
+
   proxy:
     container_name: man_proxy
     build:

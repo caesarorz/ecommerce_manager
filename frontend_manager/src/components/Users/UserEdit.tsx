@@ -21,13 +21,12 @@ export default function UserEdit() {
             }
         }
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get('roles',config)
@@ -55,13 +54,12 @@ export default function UserEdit() {
             email: user.email,
             role: user.role_id}
 
-        const val = localStorage.getItem("user")
-        if(val) {
-            const userInfo = JSON.parse(val)
+        const token = localStorage.getItem("token")
+        if(token) {
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.put(`users/${user.id}`, userUpdate, config)
@@ -73,7 +71,7 @@ export default function UserEdit() {
     return (
         <Wrapper>
                 {user && user ? (
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="mt-4">
                         <h1 className="h3 mb-3 font-weight-normal">Edit User</h1>
                         <div className="form-row">
                             <div className="col-md-6 mb-3">

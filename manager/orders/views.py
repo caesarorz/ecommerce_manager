@@ -36,14 +36,7 @@ class OrderGenericAPIView(
     pagination_class = CustomPagination
 
     def get(self, request, pk=None):
-        """Get order by id
-
-        Args:
-            request (HttpRequest):
-            pk (str, optional): Order represented by id. Defaults to None.
-
-        Returns:
-            _type_: _description_
+        """
         """
         if pk:
             return Response({
@@ -58,13 +51,7 @@ class ExportAPIView(APIView):
     # permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     def get(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment: filename=orders.csv'
@@ -84,27 +71,23 @@ class ExportAPIView(APIView):
 
 
 class ChartAPIView(APIView):
-    """_summary_"""
+    """"""
 
     # permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
     def get(self, _):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
         """
+        """
+        order = Order.objects.all()
+
 
         with connection.cursor() as cursor:
             cursor.execute("""
-            SELECT DATE_FORMAT(o.created_at, '%Y-%m-%d') as date,
-            sum(i.quantity * i.price) as sum
-            FROM orders_order as o
-            JOIN orders_orderitem as i ON o.id = i.order_id
-            GROUP BY date;
+                SELECT TO_CHAR(o.created_at, 'dd/mm/yyyy') as date,
+                sum(i.quantity * i.price) AS sum
+                FROM orders_order AS o
+                JOIN orders_orderitem AS i ON o.id = i.order_id
+                GROUP BY date;
             """)
             row = cursor.fetchall()
 

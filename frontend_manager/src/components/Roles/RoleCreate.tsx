@@ -14,13 +14,12 @@ export default function RoleCreate() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get(
@@ -56,13 +55,12 @@ export default function RoleCreate() {
                 name: role_.name,
                 permissions: role_.permissions}
 
-        const val = localStorage.getItem("user")
-        if(val) {
-            const userInfo = JSON.parse(val)
+        const token = localStorage.getItem("token")
+        if(token) {
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.post(
@@ -77,7 +75,7 @@ export default function RoleCreate() {
 
     return (
         <Wrapper>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="mt-4">
                 <h1 className="h3 mb-3 font-weight-normal">Create Role</h1>
                 <div className="form-group">
                     <label htmlFor="exampleFormControlInput1">Name</label>

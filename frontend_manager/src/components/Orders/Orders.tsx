@@ -11,16 +11,14 @@ export default function Orders() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
-
                 const { data } = await axios.get(
                     'orders',
                     config

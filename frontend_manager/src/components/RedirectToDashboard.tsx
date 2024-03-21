@@ -1,9 +1,8 @@
-import React, { Component } from "react";
 import { Navigate } from 'react-router-dom';
 
 export default function RedirectToDashboard() {
 
-    const isLoggedIn = localStorage.getItem('logged')
+    const isLoggedIn = localStorage.getItem('user') || undefined
 
     return (
         <div>

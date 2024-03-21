@@ -7,7 +7,7 @@ export default function UserProfile() {
 
     const initialState = {
         id: 0,
-        email: "",
+        username: "",
         first_name: "",
         last_name: "",
         permissions: [],
@@ -19,28 +19,25 @@ export default function UserProfile() {
     var [passwordConfirm, setPasswordConfirm] = useState("")
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     const response = await axios.get('user');
-        //     setUser(response.data.data)
-        // };
-        // fetchData();
-
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
+            const token = localStorage.getItem("token")
+            const userId = localStorage.getItem("user_id")
 
-            if(val) {
-                const userInfo = JSON.parse(val)
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get(
-                    `users/${userInfo.id}`,
+                    `users/${userId}`,
                     config
                 )
-                setUser(data.data)
+
+                console.log(data.data)
+                console.log(user)
+                setUser({...data.data})
             }
         }
         fetchData()
@@ -60,24 +57,26 @@ export default function UserProfile() {
         //     role_id: user.role.id
         // });
 
+        console.log(user)
         const userFetch = {
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                role: user.role.id}
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.username,
+            role: 1
+        }
 
-        const val = localStorage.getItem("user")
+        const token = localStorage.getItem("token")
+        const userId = localStorage.getItem("user_id")
 
-        if(val) {
-            const userInfo = JSON.parse(val)
+        if(token) {
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.put(
-                `users/${userInfo.id}`,
+                `users/${userId}`,
                 userFetch,
                 config
             )
@@ -113,7 +112,7 @@ export default function UserProfile() {
                     <div className="form-group col-md-6">
                         <label htmlFor="inputEmail">Email</label>
                         <input type="email" className="form-control" id="inputEmail"
-                            value={user.email} name="email" onChange={handleValue}/>
+                            value={user.username} name="email" onChange={handleValue}/>
                     </div>
                 </div>
                 <div className="form-group">

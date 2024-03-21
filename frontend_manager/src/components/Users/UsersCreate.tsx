@@ -12,18 +12,15 @@ export default function UsersCreate() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
-                console.log(userInfo.token)
                 const { data } = await axios.get('roles', config)
-                console.log(data.data)
                 setRoles(data.data);
             }
         };
@@ -62,24 +59,28 @@ export default function UsersCreate() {
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-        const fetchData = {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            role: user.role
-        }
-        const val = localStorage.getItem("user")
-        if(val) {
-            const userInfo = JSON.parse(val)
+
+        const payload = JSON.stringify({
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.email,
+            "email": user.email,
+            "role": 1
+          },)
+
+
+
+        const token = localStorage.getItem("token")
+        if(token) {
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.post(
                 'users',
-                fetchData,
+                payload,
                 config
             )
         }
@@ -88,7 +89,7 @@ export default function UsersCreate() {
 
     return (
             <Wrapper>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="mt-4">
                     <h1 className="h3 mb-3 font-weight-normal">Create User</h1>
                     <div className="form-row">
                         <div className="col-md-6 mb-3">

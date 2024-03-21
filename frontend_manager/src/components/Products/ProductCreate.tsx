@@ -27,13 +27,12 @@ export default function ProductCreate() {
             brand: product.brand
         }
 
-        const val = localStorage.getItem("user")
-        if(val) {
-            const userInfo = JSON.parse(val)
+        const token = localStorage.getItem("token")
+        if(token) {
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.post(
@@ -48,8 +47,20 @@ export default function ProductCreate() {
     const upload = async (e:any) => {
         if (e.target.files[0]) {
             const formData = new FormData();
+            const token = localStorage.getItem("token")
+            const config = {
+                headers: {
+                    'Content-type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+
             formData.append('image', e.target.files[0]);
-            const response = await axios.post('upload', formData);
+            const response = await axios.post(
+                'upload',
+                formData,
+                // config,
+            );
             product.image = response.data.url
             setImage(product.image);
             setSubmit(true)

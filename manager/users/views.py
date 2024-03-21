@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import exceptions, viewsets, status, generics, mixins
@@ -163,77 +164,111 @@ class RoleViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserViewSet(viewsets.ViewSet):
+
+
+# class UserViewSet(viewsets.ViewSet):
+#     """
+#     """
+#     # permission_classes = [IsAuthenticated & ViewPermissions]
+#     # permission_classes = [IsAuthenticated]
+#     authentication_classes = [JWTAuthentication]
+#     permission_object = 'users'
+
+#     def list(self, request):
+#         """
+#         """
+#         roles = User.objects.all()
+#         serializer = UserSerializer(roles, many=True)
+#         return Response({'data': serializer.data})
+
+#     def create(self, request):
+#         """
+#         """
+#         serializer = UserSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response({
+#             'data': serializer.data
+#         }, status=status.HTTP_201_CREATED)
+
+#     def retrieve(self, request, pk):
+#         """
+#         """
+#         role = User.objects.get(id=pk)
+#         serializer = UserSerializer(role)
+
+#         if serializer:
+#             return Response({
+#                 'data': serializer.data
+#             })
+#         return Response('Role doesn\'t exists')
+
+#     def update(self, request, pk=None):
+#         """
+#         """
+#         print("*******************", pk, request)
+#         user = User.objects.get(id=pk)
+#         print(user)
+#         serializer = UserSerializer(instance=user, data=request.data)
+#         print(serializer)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response({
+#             'data': serializer.data
+#         }, status=status.HTTP_202_ACCEPTED)
+
+#     def delete(self, request, pk=None):
+#         """
+#         """
+#         role = User.objects.get(id=pk)
+#         if role:
+#             role.delete()
+#             return Response({"data": "Role deleted succesfully"})
+
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class ProfileInfoAPIView(APIView):
+#     """
+#     """
+#     # permission_classes = [IsAuthenticated]
+#     authentication_classes = [JWTAuthentication]
+#     def get(self, request):
+#         """
+#         """
+#         user = request.user
+#         serializer = UserSerializer(user, data=request.data, partial=True)
+#         return Response(serializer.data)
+
+class CreateUserView(generics.CreateAPIView):
+    """Create a new user type staff."""
+    serializer_class = UserSerializer
+
+
+class UserView(generics.RetrieveUpdateAPIView):
+    """Manage the authenticated user."""
+    serializer_class = UserSerializer
+    # authentication_classes = [authentication.TokenAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        """Retrieve and return the authenticated user."""
+        return self.request.user
+
+class UserDetail(APIView):
     """
+    Retrieve a user instance.
     """
-    # permission_classes = [IsAuthenticated & ViewPermissions]
-    # permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
-    permission_object = 'users'
+    def get_object(self, pk):
+        try:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise Http404
 
-    def list(self, request):
-        """
-        """
-        roles = User.objects.all()
-        serializer = UserSerializer(roles, many=True)
-        return Response({'data': serializer.data})
-
-    def create(self, request):
-        """
-        """
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({
-            'data': serializer.data
-        }, status=status.HTTP_201_CREATED)
-
-    def retrieve(self, request, pk):
-        """
-        """
-        role = User.objects.get(id=pk)
-        serializer = UserSerializer(role)
-
-        if serializer:
-            return Response({
-                'data': serializer.data
-            })
-        return Response('Role doesn\'t exists')
-
-    def update(self, request, pk=None):
-        """
-        """
-        user = User.objects.get(id=pk)
-        serializer = UserSerializer(instance=user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({
-            'data': serializer.data
-        }, status=status.HTTP_202_ACCEPTED)
-
-    def delete(self, request, pk=None):
-        """
-        """
-        role = User.objects.get(id=pk)
-        if role:
-            role.delete()
-            return Response({"data": "Role deleted succesfully"})
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class ProfileInfoAPIView(APIView):
-    """
-    """
-    # permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
-    def get(self, request):
-        """
-        """
-        user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
+    def get(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = UserSerializer(snippet)
         return Response(serializer.data)
-
 
 class ProfilePasswordAPIView(APIView):
     """

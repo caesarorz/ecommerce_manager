@@ -8,7 +8,7 @@ import { Product } from "../../classes/Product";
 export default function Products() {
 
     const navegate = useNavigate();
-    const [products, setProducts]  = useState([{id: 0, title:"", brand:"", description:"", price:0, image:"" }]);
+    const [products, setProducts]  = useState([]);
     const [page, setPage] = useState(1);
 
     useEffect(() => {
@@ -16,19 +16,19 @@ export default function Products() {
             // const response = await axios.get(`/products?page=${page}`);
             // const response = await axios.get(`/products`);
 
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get(
                     'products',
                     config
                 )
+                console.log(data)
                 // setPage(data.meta.page);
                 setProducts(data.data);
             }
@@ -41,13 +41,12 @@ export default function Products() {
         try {
             // await axios.delete(`products/${e.target.value}`)
 
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+            const token = localStorage.getItem("token")
+            if(token) {
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.delete(

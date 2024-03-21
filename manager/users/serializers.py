@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, Permission, Role
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import get_user_model
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -46,18 +47,53 @@ class RoleRelatedField(serializers.RelatedField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    role = RoleRelatedField(many=False, queryset=Role.objects.all())
-    is_admin = serializers.SerializerMethodField(read_only=True)
+    """Serializer for the user object."""
 
     class Meta:
-        model = User
-        fields = ['id', 'first_name', 'username', 'last_name', 'role', 'is_admin']
+        model = get_user_model()
+        fields = [
+            "id",
+            "email",
+            "username",
+            "password",
+            "is_superuser",
+            "is_active",
+            "is_staff",
+        ]
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
-    def get_id(self, obj):
-        return obj.id
+    def create(self, validated_data):
+        """Create and return a user with encrypted password."""
+        print(validated_data)
+        user = get_user_model().objects.create_user(**validated_data)
+        print(user)
+        return user
 
-    def get_is_admin(self, obj):
-        return obj.is_staff
+    def update(self, instance, validated_data):
+        """Update and return user."""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
+
+# class UserSerializer(serializers.ModelSerializer):
+#     role = RoleRelatedField(many=False, queryset=Role.objects.all())
+#     is_admin = serializers.SerializerMethodField(read_only=True)
+
+#     class Meta:
+#         model = User
+#         fields = ['id', 'first_name', 'username', 'last_name', 'role', 'is_admin']
+
+#     def get_id(self, obj):
+#         return obj.id
+
+#     def get_is_admin(self, obj):
+#         return obj.is_staff
 
 class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)
@@ -75,16 +111,16 @@ class UserSerializerWithToken(UserSerializer):
 #     detail = serializers.CharField()
 
 
-class UserSerializerWithToken(UserSerializer):
-    token = serializers.SerializerMethodField(read_only=True)
+# class UserSerializerWithToken(UserSerializer):
+#     token = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'name', 'isAdmin', 'token']
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'email', 'name', 'isAdmin', 'token']
 
-    def get_token(self, obj):
-        token = RefreshToken.for_user(obj)
-        return str(token.access_token)
+#     def get_token(self, obj):
+#         token = RefreshToken.for_user(obj)
+#         return str(token.access_token)
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

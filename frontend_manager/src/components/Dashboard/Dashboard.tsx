@@ -25,33 +25,33 @@ export default function Dashboard() {
                   x: {
                     type: 'timeseries',
                     tick: {
-                        format: '%Y-%m-%d'
+                        format: '%d-%m-%Y'
                     }
                   }
                 }
             });
 
-            const val = localStorage.getItem("user")
-            if(val) {
-                const userInfo = JSON.parse(val)
+                const token = localStorage.getItem("token")
                 const config = {
                     headers: {
                         'Content-type': 'application/json',
-                        Authorization: `Bearer ${userInfo.token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
                 const { data } = await axios.get(
                     'chart',
                     config
                 )
-                  const information: {date:string, sum:number}[] = data.data;
+
+                const information: {date:string, sum:number}[] = data.data;
+
                 chart.load({
                   columns: [
-                    ['x', ...information.map(r => r.date)],
+                    ['x', ...information.map(r =>  new Date(r.date))],
                     ['Sales', ...information.map(r => r.sum)]
                   ]
                 })
-            }
+
         };
         fetchData();
       }, [])

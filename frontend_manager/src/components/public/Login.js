@@ -1,11 +1,12 @@
 import { useState } from "react";
-import './Public.css';
 import axios from 'axios';
 import {Link, useNavigate} from 'react-router-dom';
-
 import Message from "../secure/Message";
+import { parseJwt } from '../../utils/generalUtils'
+import './Public.css';
 
 export default function Login() {
+
     const navegate = useNavigate();
     const [login, loginUser]  = useState(
             {
@@ -17,7 +18,6 @@ export default function Login() {
     const [message, setMesssage] = useState('');
 
     const formSubmit = async (e) => {
-        console.log(e, login)
         e.preventDefault();
         try {
             const response = await axios.post('login', {
@@ -26,13 +26,16 @@ export default function Login() {
                 password: login.password
             })
 
-            console.log(response)
+            console.log(response.data)
+            if(response.data) {
+                const parseToken = parseJwt(response.data.access)
+                localStorage.setItem("token", response.data.access)
+                localStorage.setItem("user", login.email)
+                localStorage.setItem("user_id", parseToken.user_id)
+                navegate("/")
+                return
+            }
 
-            const { email, first_name, id, last_name, role, token } = response.data
-            localStorage.setItem("logged", "true");
-            localStorage.setItem("user", JSON.stringify({"email": email, "first_name": first_name, "id": id, "last_name": last_name, "token": token, "role":role}))
-            navegate("/")
-            return
         } catch (error) {
             if(error.response.data && error.response.data.detail){
                 console.log(error.response.data.detail)
@@ -43,11 +46,11 @@ export default function Login() {
     }
 
     return (
-            <form className="form-signin" onSubmit={formSubmit}>
+            <form className="form-signin mt-4" onSubmit={formSubmit}>
                 { (message) ? <Message variant='alert alert-warning' children={message}/> : ''}
                 <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                 <label htmlFor="inputEmail" className="sr-only">Email address</label>
-                <input type="text" id="inputEmail" className="form-control" placeholder="Email address" required autoFocus
+                <input type="email" id="inputEmail" className="form-control" placeholder="Email address" required autoFocus
                     onChange={a => login.email = a.target.value}/>
                 <label htmlFor="inputPassword" className="sr-only">Password</label>
                 <input type="password" id="inputPassword" className="form-control" placeholder="Password" required
