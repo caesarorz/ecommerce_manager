@@ -22,7 +22,7 @@ export default function Users() {
                     }
                 }
                 const { data } = await axios.get(
-                    'users',
+                    'user/',
                     config
                 )
                 setUsers(data.data)

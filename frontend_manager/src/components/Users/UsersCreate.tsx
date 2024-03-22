@@ -65,7 +65,8 @@ export default function UsersCreate() {
             "last_name": user.last_name,
             "username": user.email,
             "email": user.email,
-            "role": 1
+            "role": 2,
+            "password": "pass123$$",
           },)
 
 
@@ -79,10 +80,11 @@ export default function UsersCreate() {
                 }
             }
             const { data } = await axios.post(
-                'users',
+                'user/create/',
                 payload,
                 config
             )
+            console.log(data)
         }
         navigate('/users')
     }

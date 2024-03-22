@@ -60,10 +60,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
-# def updateUser(sender, instance, **kwargs):
-#     user = instance
-#     if user.email != '':
-#         user.username = user.email
+def updateUser(sender, instance, **kwargs):
+    user = instance
+    if user.email != '':
+        user.username = user.email
 
 
-# pre_save.connect(updateUser, sender=User)
+pre_save.connect(updateUser, sender=User)
