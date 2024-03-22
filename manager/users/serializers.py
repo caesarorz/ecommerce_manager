@@ -50,22 +50,14 @@ class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
 
     class Meta:
-        model = get_user_model()
-        fields = [
-            "id",
-            "email",
-            "username",
-            "password",
-            "is_superuser",
-            "is_active",
-            "is_staff",
-        ]
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'password', 'role', 'is_active', 'is_staff']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
         print(validated_data)
-        user = get_user_model().objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
         print(user)
         return user
 
@@ -80,20 +72,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
-
-# class UserSerializer(serializers.ModelSerializer):
-#     role = RoleRelatedField(many=False, queryset=Role.objects.all())
-#     is_admin = serializers.SerializerMethodField(read_only=True)
-
-#     class Meta:
-#         model = User
-#         fields = ['id', 'first_name', 'username', 'last_name', 'role', 'is_admin']
-
-#     def get_id(self, obj):
-#         return obj.id
-
-#     def get_is_admin(self, obj):
-#         return obj.is_staff
 
 class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)

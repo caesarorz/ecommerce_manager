@@ -23,6 +23,11 @@ services:
       - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
       - static-data-manager:/vol/web
+    command: >
+      sh -c "python manage.py wait_db &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
 
@@ -38,6 +43,23 @@ services:
       - 5432:5432
     volumes:
       - postgres-data-manager:/var/lib/postgresql/data
+
+  pgAdminMan:
+      image: dpage/pgadmin4
+      container_name: manager_pgadmindev
+      restart: always
+      depends_on:
+        - db
+      ports:
+        - 8080:80
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=devuser@email.com
+        - PGADMIN_DEFAULT_PASSWORD=changeme
+      volumes:
+        - ./pgadmin:/var/lib/pgadmin
+        - ./pgadmin:/certs/server.cert
+        - ./pgadmin:/certs/server.key
+        - ./pgadmin:/pgadmin4/servers.json
 
 
 volumes:

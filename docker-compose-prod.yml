@@ -25,8 +25,6 @@ services:
       - static-data-manager:/vol/web
     ports:
       - "8000:8000"
-    # networks:
-    #   - api-network
 
   db:
     container_name: man_db
@@ -40,8 +38,6 @@ services:
       - 5432:5432
     volumes:
       - postgres-data-manager:/var/lib/postgresql/data
-    # networks:
-    #   - api-network
 
   pgAdmin:
       image: dpage/pgadmin4
@@ -59,8 +55,6 @@ services:
         - ./pgadmin:/certs/server.cert
         - ./pgadmin:/certs/server.key
         - ./pgadmin:/pgadmin4/servers.json
-    # networks:
-    #   - api-network
 
   proxy:
     container_name: man_proxy
@@ -73,13 +67,6 @@ services:
       - 8004:8000
     volumes:
       - static-data-manager:/vol/static
-    # networks:
-    #   - api-network
-
-
-# networks:
-#   api-network:
-#     driver: bridge  # Use a bridge network for the containers
 
 
 volumes:
