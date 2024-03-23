@@ -62,6 +62,7 @@ export default function ProductCreate() {
                 // config,
             );
             product.image = response.data.url
+            console.log(response)
             setImage(product.image);
             setSubmit(true)
           }

@@ -65,7 +65,7 @@ export default function UsersCreate() {
             "last_name": user.last_name,
             "username": user.email,
             "email": user.email,
-            "role": 2,
+            "role": user?.role && null,
             "password": "pass123$$",
           },)
 

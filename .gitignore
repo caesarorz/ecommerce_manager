@@ -144,3 +144,4 @@ info
 test.js
 /node-modules
 pgadmin/
+pgadmin/pgadmin4.db

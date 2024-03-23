@@ -25,7 +25,6 @@ export default function Login() {
                 password: login.password
             })
 
-            console.log(response.data)
             if(response.data) {
                 const parseToken = parseJwt(response.data.access)
                 localStorage.setItem("token", response.data.access)

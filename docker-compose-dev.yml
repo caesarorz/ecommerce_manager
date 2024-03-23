@@ -5,6 +5,8 @@ services:
     container_name: man_api
     build:
       context: .
+      args:
+        - DEV=true
       dockerfile: ./manager/Dockerfile
     restart: always
     depends_on:
@@ -44,22 +46,22 @@ services:
     volumes:
       - postgres-data-manager:/var/lib/postgresql/data
 
-  pgAdminMan:
-      image: dpage/pgadmin4
-      container_name: manager_pgadmindev
-      restart: always
-      depends_on:
-        - db
-      ports:
-        - 8080:80
-      environment:
-        - PGADMIN_DEFAULT_EMAIL=devuser@email.com
-        - PGADMIN_DEFAULT_PASSWORD=changeme
-      volumes:
-        - ./pgadmin:/var/lib/pgadmin
-        - ./pgadmin:/certs/server.cert
-        - ./pgadmin:/certs/server.key
-        - ./pgadmin:/pgadmin4/servers.json
+  # pgAdminMan:
+  #     image: dpage/pgadmin4
+  #     container_name: manager_pgadmindev
+  #     restart: always
+  #     depends_on:
+  #       - db
+  #     ports:
+  #       - 8080:80
+  #     environment:
+  #       - PGADMIN_DEFAULT_EMAIL=devuser@email.com
+  #       - PGADMIN_DEFAULT_PASSWORD=changeme
+  #     volumes:
+  #       - ./pgadmin:/var/lib/pgadmin
+  #       - ./pgadmin:/certs/server.cert
+  #       - ./pgadmin:/certs/server.key
+  #       - ./pgadmin:/pgadmin4/servers.json
 
 
 volumes:

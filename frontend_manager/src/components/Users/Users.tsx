@@ -25,7 +25,8 @@ export default function Users() {
                     'user/',
                     config
                 )
-                setUsers(data.data)
+                console.log(data)
+                setUsers(data)
             }
         }
         fetchData()
@@ -43,7 +44,7 @@ export default function Users() {
                     }
                 }
                 const { data } = await axios.delete(
-                    `users/${e.target.value}`,
+                    `user/${e.target.value}`,
                     config
                 )
                 setUsers(users.filter((user: User) => user.id !== parseInt(e.target.value)));
@@ -85,9 +86,9 @@ export default function Users() {
                         </thead>
                         <tbody>
                             {users && users.map(
-                                (user: User) => {
+                                (user: User, index: number) => {
                                     return (
-                                        <tr key={user.id}>
+                                        <tr key={index}>
                                             <td>{user.id}</td>
                                             <td>{user.first_name}</td>
                                             <td>{user.last_name}</td>

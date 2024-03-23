@@ -2,7 +2,7 @@
 from django.core.files.storage import default_storage
 
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -13,37 +13,24 @@ from users.authentication import JWTAuthentication
 
 # Create your views here.
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductImageSerializer
 from manager.pagination import CustomPagination
 
 
 class ProductViewSet(viewsets.ViewSet):
     """Product View Set"""
     authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
     permission_object = 'products'
 
     def list(self, request):
         """Retrieve a list of all products
-
-        Args:
-            request (HttpRequest): No using.
-
-        Returns:
-            _type_: _description_
         """
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response({'data': serializer.data})
 
     def create(self, request):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        """
         """
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -78,6 +65,19 @@ class ProductViewSet(viewsets.ViewSet):
             return Response({"data": "Product deleted succesfully"})
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['POST'], detail=True, url_path='upload-image')
+    def upload_image(self, request, pk=None):
+        """Upload an image to recipe."""
+        product = self.get_object()
+        serializer = ProductImageSerializer(product, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class FileUploadView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -85,7 +85,10 @@ class FileUploadView(APIView):
     parser_classes = (MultiPartParser,)
 
     def post(self, request):
+        print("FileUploadView", request)
+        print()
         file = request.FILES['image']
+        print(file)
         filename = default_storage.save(file.name, file)
         url = default_storage.url(filename)
         return Response({

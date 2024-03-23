@@ -11,6 +11,8 @@ export default function Nav() {
             const user = localStorage.getItem("user")
             if(user) {
                 setUser({email: user})
+            } else {
+                navegate('/logout')
             }
         };
         fetchData();
