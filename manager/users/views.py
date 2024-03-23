@@ -206,7 +206,10 @@ class UserList(APIView):
     """
     List all users
     """
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, format=None):
+        print("*****************, all users")
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)

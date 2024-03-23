@@ -6,3 +6,4 @@ drf-spectacular>=0.22.1,<0.23
 Pillow>=9.1.0,<9.2
 djangorestframework-simplejwt
 django-cors-headers
+django-storages==1.12.3

@@ -24,8 +24,8 @@ export default function ProductEdit() {
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-        const val = localStorage.getItem("user")
-        if(val) {
+        const token = localStorage.getItem("token")
+        if(token) {
             const submitInfo = {
                 title: product.title,
                 brand: product.brand,
@@ -33,11 +33,10 @@ export default function ProductEdit() {
                 image: product.image,
                 price: product.price
             }
-            const userInfo = JSON.parse(val)
             const config = {
                 headers: {
                     'Content-type': 'application/json',
-                    Authorization: `Bearer ${userInfo.token}`
+                    Authorization: `Bearer ${token}`
                 }
             }
             const { data } = await axios.put(

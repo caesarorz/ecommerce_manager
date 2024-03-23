@@ -38,7 +38,7 @@ RUN python -m venv /py && \
 
 ENV PATH="/scripts:/py/bin:$PATH"
 
-USER django-user
+# USER django-user
 
 # future use
 # RUN if [ $DEV = "true" ] ; then CMD ["run.dev.sh"] ; else CMD ["run.sh"] ; fi

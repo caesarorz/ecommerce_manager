@@ -53,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
+    date_joined = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     objects = UserManager()
 

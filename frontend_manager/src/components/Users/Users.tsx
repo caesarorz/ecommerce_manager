@@ -88,7 +88,7 @@ export default function Users() {
                             {users && users.map(
                                 (user: User, index: number) => {
                                     return (
-                                        <tr key={index}>
+                                        <tr key={user.id+user.email}>
                                             <td>{user.id}</td>
                                             <td>{user.first_name}</td>
                                             <td>{user.last_name}</td>

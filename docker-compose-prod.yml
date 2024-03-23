@@ -23,8 +23,6 @@ services:
       - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
       - static-data-manager:/vol/web
-    ports:
-      - "8000:8000"
 
   db:
     container_name: man_db

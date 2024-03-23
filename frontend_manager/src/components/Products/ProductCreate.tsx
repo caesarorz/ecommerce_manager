@@ -36,10 +36,11 @@ export default function ProductCreate() {
                 }
             }
             const { data } = await axios.post(
-                'products',
+                'products/',
                 fetchData,
                 config
             )
+            console.log(data)
         }
         navigate('/products')
     }
@@ -54,17 +55,18 @@ export default function ProductCreate() {
                     Authorization: `Bearer ${token}`
                 }
             }
-
+            console.log(e.target.files[0])
             formData.append('image', e.target.files[0]);
             const response = await axios.post(
-                'upload',
+                'upload/',
                 formData,
-                // config,
+                config,
             );
-            product.image = response.data.url
             console.log(response)
-            setImage(product.image);
-            setSubmit(true)
+            // product.image = response.data.url
+            // console.log(response)
+            // setImage(product.image);
+            // setSubmit(true)
           }
     }
 
@@ -100,7 +102,7 @@ export default function ProductCreate() {
                     <input type="file" className="form-control-file" id="exampleFormControlFile1"
                          onChange={upload}/>
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={submit ? false : true}>Create</button>
+                <button type="submit" className="btn btn-primary" >Create</button>
                 <button className="btn" type="submit"
                             onClick={() => navigate('/products')}>Cancel
                 </button>

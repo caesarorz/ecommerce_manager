@@ -24,6 +24,7 @@ services:
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
       - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
     volumes:
+      - ./manager:/app
       - static-data-manager:/vol/web
     command: >
       sh -c "python manage.py wait_db &&
@@ -46,22 +47,22 @@ services:
     volumes:
       - postgres-data-manager:/var/lib/postgresql/data
 
-  # pgAdminMan:
-  #     image: dpage/pgadmin4
-  #     container_name: manager_pgadmindev
-  #     restart: always
-  #     depends_on:
-  #       - db
-  #     ports:
-  #       - 8080:80
-  #     environment:
-  #       - PGADMIN_DEFAULT_EMAIL=devuser@email.com
-  #       - PGADMIN_DEFAULT_PASSWORD=changeme
-  #     volumes:
-  #       - ./pgadmin:/var/lib/pgadmin
-  #       - ./pgadmin:/certs/server.cert
-  #       - ./pgadmin:/certs/server.key
-  #       - ./pgadmin:/pgadmin4/servers.json
+  pgAdminMan:
+      image: dpage/pgadmin4
+      container_name: manager_pgadmindev
+      restart: always
+      depends_on:
+        - db
+      ports:
+        - 8080:80
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=devuser@email.com
+        - PGADMIN_DEFAULT_PASSWORD=changeme
+      volumes:
+        - ./pgadmin:/var/lib/pgadmin
+        - ./pgadmin:/certs/server.cert
+        - ./pgadmin:/certs/server.key
+        - ./pgadmin:/pgadmin4/servers.json
 
 
 volumes:

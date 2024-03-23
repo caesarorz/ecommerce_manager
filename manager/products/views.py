@@ -1,13 +1,12 @@
 
 from django.core.files.storage import default_storage
 
-
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions, viewsets, status, generics, mixins
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from users.authentication import JWTAuthentication
 
@@ -80,17 +79,23 @@ class ProductViewSet(viewsets.ViewSet):
 
 
 class FileUploadView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-        print("FileUploadView", request)
-        print()
-        file = request.FILES['image']
-        print(file)
-        filename = default_storage.save(file.name, file)
+        print("************************************FileUploadView", request)
+        thefile = request.FILES['image']
+        filename = default_storage.save(thefile.name, thefile)
+        print("**************************************filename", filename)
         url = default_storage.url(filename)
+
+        # file = default_storage.open(, mode="rb")
+        # data = file.read()
+        # file.close()
+
+
+        print("url", url)
         return Response({
             'url': url
         })

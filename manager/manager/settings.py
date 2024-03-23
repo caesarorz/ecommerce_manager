@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_spectacular',
     'corsheaders',
+    'storages',
     'users',
     'products',
     'orders',
@@ -239,7 +240,6 @@ AWS_QUERYSTRING_AUTH = False
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME', '')
-
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Manager Ecommerce API Documentation',

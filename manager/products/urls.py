@@ -12,6 +12,7 @@ app_name = 'products'
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('upload/', FileUploadView.as_view()),
 ]
 
 

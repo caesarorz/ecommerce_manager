@@ -7,7 +7,7 @@ export default function UserProfile() {
 
     const initialState = {
         id: 0,
-        username: "",
+        email: "",
         first_name: "",
         last_name: "",
         permissions: [],
@@ -31,13 +31,13 @@ export default function UserProfile() {
                     }
                 }
                 const { data } = await axios.get(
-                    `users/${userId}`,
+                    `user/${userId}`,
                     config
                 )
-
-                console.log(data.data)
+                console.log(userId)
+                console.log(data)
                 console.log(user)
-                setUser({...data.data})
+                setUser({...data})
             }
         }
         fetchData()
@@ -50,18 +50,12 @@ export default function UserProfile() {
 
     const changedUser = async (e:any) => {
         e.preventDefault();
-        // const response = await axios.put(`users/${user.id}`,{
-        //     first_name: user.first_name,
-        //     last_name: user.last_name,
-        //     email: user.email,
-        //     role_id: user.role.id
-        // });
 
         console.log(user)
         const userFetch = {
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.username,
+            email: user.email,
             role: 1
         }
 
@@ -76,7 +70,7 @@ export default function UserProfile() {
                 }
             }
             const { data } = await axios.put(
-                `users/${userId}`,
+                `user/${userId}`,
                 userFetch,
                 config
             )
@@ -96,7 +90,7 @@ export default function UserProfile() {
 
     return(
         <Wrapper>
-            <h1 className="h3 mb-3 font-weight-normal">User profile</h1>
+            <h1 className="h3 mb-3 mt-4 font-weight-normal">User profile</h1>
             <form onSubmit={changedUser}>
                 <div className="form-row">
                     <div className="form-group col-md-6">
@@ -112,7 +106,7 @@ export default function UserProfile() {
                     <div className="form-group col-md-6">
                         <label htmlFor="inputEmail">Email</label>
                         <input type="email" className="form-control" id="inputEmail"
-                            value={user.username} name="email" onChange={handleValue}/>
+                            value={user.email} name="email" onChange={handleValue}/>
                     </div>
                 </div>
                 <div className="form-group">

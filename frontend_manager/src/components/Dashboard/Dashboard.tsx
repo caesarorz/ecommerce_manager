@@ -58,7 +58,7 @@ export default function Dashboard() {
 
       return (
         <Wrapper>
-            <h2>Sales</h2>
+            <h2 className="mt-4">Sales</h2>
             <div id="chart"></div>
         </Wrapper>
       )
