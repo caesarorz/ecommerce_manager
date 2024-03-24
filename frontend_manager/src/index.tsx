@@ -5,8 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
-// axios.defaults.baseURL = 'http://ec2-13-58-105-195.us-east-2.compute.amazonaws.com/api/';
-axios.defaults.baseURL = 'http://localhost:80/api/';
+axios.defaults.baseURL = 'http://ec2-18-191-207-76.us-east-2.compute.amazonaws.com/api/';
+// axios.defaults.baseURL = 'http://localhost:80/api/';
 axios.defaults.withCredentials = true;
 
 

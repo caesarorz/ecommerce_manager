@@ -56,7 +56,7 @@ export default function Login() {
                 <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
                 <p>New: <Link to={'/register'}> Register</Link></p>
                 <hr></hr>
-                <p className="mt-5 mb-3 text-muted">eCommerce 2023</p>
+                <p className="mt-5 mb-3 text-muted">eCommerce 2024</p>
             </form>
         )
 }
