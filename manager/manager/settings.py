@@ -55,12 +55,6 @@ INSTALLED_APPS = [
     'core',
 ]
 
-# Token JWT: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
 
 from datetime import timedelta
 
@@ -136,6 +130,7 @@ TEMPLATES = [
 ]
 
 
+# Token JWT: https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -224,7 +219,6 @@ CORS_ALLOWED_ORIGINS.extend(
     )
 )
 
-# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 # Default primary key field type
